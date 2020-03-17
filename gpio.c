@@ -1,0 +1,61 @@
+#include<gpio.h>
+
+
+
+void init_pins(void)
+{
+	/* led pins */
+    IOMUXC_SetPinMux(IOMUXC_SNVS_SNVS_TAMPER3_GPIO5_IO03, 0U);
+    IOMUXC_SetPinConfig(IOMUXC_SNVS_SNVS_TAMPER3_GPIO5_IO03, 
+                        IOMUXC_SW_PAD_CTL_PAD_SRE_MASK |
+                        IOMUXC_SW_PAD_CTL_PAD_DSE(1U) |
+                        IOMUXC_SW_PAD_CTL_PAD_HYS_MASK);
+
+	/* uart1 pins */	
+	IOMUXC_SetPinMux(IOMUXC_UART1_RX_DATA_UART1_RX, 0U);
+	IOMUXC_SetPinConfig(IOMUXC_UART1_RX_DATA_UART1_RX, 
+						IOMUXC_SW_PAD_CTL_PAD_DSE(2U) |
+						IOMUXC_SW_PAD_CTL_PAD_SPEED(2U) |
+						IOMUXC_SW_PAD_CTL_PAD_PKE_MASK);
+	IOMUXC_SetPinMux(IOMUXC_UART1_TX_DATA_UART1_TX, 0U);
+	IOMUXC_SetPinConfig(IOMUXC_UART1_TX_DATA_UART1_TX, 
+						IOMUXC_SW_PAD_CTL_PAD_DSE(2U) |
+						IOMUXC_SW_PAD_CTL_PAD_SPEED(2U) |
+						IOMUXC_SW_PAD_CTL_PAD_PKE_MASK);
+
+	/* KEY1 pins GPIO5_1 SNVS_TAMPER1 */
+	IOMUXC_SetPinMux(IOMUXC_SNVS_SNVS_TAMPER1_GPIO5_IO01, 0U);
+	IOMUXC_SetPinConfig(IOMUXC_SNVS_SNVS_TAMPER1_GPIO5_IO01, 
+						IOMUXC_SW_PAD_CTL_PAD_DSE(6U) |
+						IOMUXC_SW_PAD_CTL_PAD_SPEED(2U) |
+						IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |
+						IOMUXC_SW_PAD_CTL_PAD_HYS_MASK);
+
+	/* KEY2 pins GPIO4_IO14 */
+	IOMUXC_SetPinMux(IOMUXC_NAND_CE1_B_GPIO4_IO14, 0U);
+	IOMUXC_SetPinConfig(IOMUXC_NAND_CE1_B_GPIO4_IO14, 
+						IOMUXC_SW_PAD_CTL_PAD_DSE(6U) |
+						IOMUXC_SW_PAD_CTL_PAD_SPEED(2U) |
+						IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |
+						IOMUXC_SW_PAD_CTL_PAD_HYS_MASK);
+
+}
+void gpio_init()
+{
+
+}
+
+void gpio_interrupt_enable()
+{
+
+}
+
+int get_gpio()
+{
+
+}
+
+void set_gpio()
+{
+
+}
