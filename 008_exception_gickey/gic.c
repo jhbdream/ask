@@ -57,6 +57,11 @@ void gic_enable_irq(IRQn_Type nr)
 
 }
 
+#define GPIO4                                       0X020A8000U
+#define GPIO4_DR                                  	(volatile unsigned int *)(GPIO4+0X00)
+#define GPIO4_ISR                                   (volatile unsigned int *)(GPIO4+0X18)
+#define GPIO4_PSR                                   (volatile unsigned int *)(GPIO4+0X08)
+
 void gic_disable_irq(IRQn_Type nr)
 {
 	GIC_Type *gic = get_gic_base();
@@ -77,19 +82,22 @@ void handle_irq_c(void)
 	 * signaled interrupt. This read acts as an acknowledge for the interrupt
 	 */
 	nr = gic->C_IAR;
-	printf("irq %d is happened\r\n", nr);
 
 	switch(nr)
 	{
 		case GPIO4_Combined_16_31_IRQn:
 		{
-			/* read GPIO4_DR to get GPIO4_IO014 status*/
-			if((GPIO4->PSR >> 19 ) & 0x1)
-				printf("sensor ir is irq\r\n");
-			
-			/* write 1 to clear GPIO4_IO019 interrput status*/
-			GPIO4->ISR |= (1 << 19);
+				printf ("[0X%x]\r\n",  (*GPIO4_PSR) );	
+				//irda_irq();
+				/* write 1 to clear GPIO4_IO019 interrput status*/
+				*GPIO4_ISR |= (1 << 19);
 			break;
+		}
+		case GPT2_IRQn:
+		{
+			timer_irq();
+			/* 清除中断 */
+			GPT2->SR = 1;
 		}
 
 		default:
