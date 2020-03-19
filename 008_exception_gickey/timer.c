@@ -71,3 +71,24 @@ unsigned int delta_time_us(unsigned long long pre, unsigned long long now)
 {
 	return (now - pre);
 }
+
+/* 尽量少调用函数 */
+void udelay(int n)
+{
+	int cnt = n * 66;  /* n us 对应n*66个计数值 */
+	int pre = (*GPT2_CNT);
+	int cur;
+	int delta;
+
+	while (cnt > 0)
+	{
+		cur = (*GPT2_CNT);
+		if (cur <= pre)
+			delta = pre - cur;
+		else
+			delta = pre + (660000 - cur);
+
+		cnt = cnt - delta;
+		pre = cur;
+	}
+}

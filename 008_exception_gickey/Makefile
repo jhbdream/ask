@@ -13,7 +13,7 @@ GCCDIR=$(shell which arm-linux-gnueabihf-gcc)
 LIBDIR=$(subst arm-linux-gnueabihf-gcc,../,$(GCCDIR))
 
 LDFLAGS         :=-lgcc -L$(LIBDIR)lib/gcc/arm-linux-gnueabihf/6.2.1
-objs :=  start.o main.o uart.o eabi_compat.o my_printf.o gic.o gpio.o timer.o irda/circle_buffer.o irda/irda_raw.o
+objs :=  start.o main.o uart.o eabi_compat.o my_printf.o gic.o gpio.o timer.o irda/circle_buffer.o irda/irda_raw.o  irda/irda_nec.o
 
 TARGET := irda
 

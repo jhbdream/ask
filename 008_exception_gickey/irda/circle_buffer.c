@@ -36,3 +36,20 @@ int ir_event_get(p_irda_raw_event pd)
 }
 
 
+int ir_event_get_timeout(p_irda_raw_event pd, int timeout_us)
+{
+	while (timeout_us--)
+	{
+		if (!is_ir_event_buf_empty())
+		{
+			*pd = g_events[g_r];
+			g_r = NEXT_PLACE(g_r);
+			
+			return 0;
+		}
+		udelay(1);
+	}
+	return -1;
+}
+
+

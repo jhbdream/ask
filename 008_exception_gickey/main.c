@@ -16,7 +16,7 @@ int  main()
 
 	gpt_init(GPT2);
 
-	irda_raw_test();	
+	irda_nec_test();	
 	return 0;
 }
 
