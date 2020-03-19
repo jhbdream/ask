@@ -17,39 +17,15 @@ static unsigned long long g_last_time = 0;
  /* 先实现GPIO的基本操作 */
 static void irda_data_cfg_as_eint(void)
 {
-   	unsigned int val=0;
-    /* 使能GPIO4 时钟 */
-    *CCM_CCGR3 |= (3<<12);
-
-    /* 设置引脚复用功能为GPIO */
-    *IOMUXC_CSI_VSYNC_GPIO4_IO19 = 0x15;
-
-    /* 设置GPIO为输入模式 */
-    val = *GPIO4_GDIR;
-	val &= ~(1<<19);
-	*GPIO4_GDIR = val;
-    
-    /* 设置为双边沿中断模式*/
-    *GPIO4_ICR2 |= (3<<6);
-    *GPIO4_EDGE_SEL |= (1<19);
-    
-    /* 使能中断 */
-    *GPIO4_IMR |= (1<<19);
-
+    ir_gpio_init();
 }
 
 static int irda_data_get(void)
 {
-	/*
-	if ( (*GPIO4_DR) & (1<<19) )
-		return 1;
-	else
-	*/
-		printf ("[%d]", ( (*GPIO4_DR) >> 19 ) & 0x01);
-		return ( (*GPIO4_DR) >> 19 ) & 0x01;
-
+	return get_ir_gpio_date();
 }
 
+/*irda中断处理函数*/
 void irda_irq(int irq)
 {
 	/* 在中断处理函数里:
@@ -59,38 +35,44 @@ void irda_irq(int irq)
 		 把数据放入环型缓冲区
 	*/
 	irda_raw_event event;
+	/*获得当前时间并赋值给cur*/
 	unsigned long long cur = get_system_time_us();
-	
+	/*上次时间和这次时间的差值，也就是周期*/
 	event.duration = delta_time_us(g_last_time, cur);
+	/*获取引脚极性*/
 	event.pol      = !irda_data_get();
+	/*我们需要环形缓冲区的函数放入环形缓冲区 */
 	ir_event_put(&event);
+	/*更新时间*/
 	g_last_time = cur;
 }
 
-
-/* 注册中断 */
+/* 初始化ir的gpio */
 void irda_init(void)
 {
 	irda_data_cfg_as_eint();
 }
 
+/*测试原始数据*/
 void irda_raw_test(void)
 {
 	irda_raw_event event;
 	unsigned long long pre = 0, cur;
 	
-	//irda_init();
+	irda_init();
 
 	while (1)
 	{
+		/*如果从唤醒缓冲区读到数据，就把它打印出来*/
 		if (0 == ir_event_get(&event))
 		{
 			cur = get_system_time_us();
+			/*如果这次时间和上次时间相差远的话，就打印回车换行*/
 			if (delta_time_us(pre, cur) > 1000000)
 				printf("\n\r");
 			pre = cur;
-			printf("%s %d us | \n\r", event.pol? "hight" : "low", event.duration);
+			/*使用三目运算符来判断pol是高电平还是低电平*/
+			printf("%s %d us \n\r ", event.pol? "hight" : "low", event.duration);
 		}
 	}
 }
-

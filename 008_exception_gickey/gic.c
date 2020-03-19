@@ -1,5 +1,9 @@
 #include "gic.h"
 #include "my_printf.h"
+#include"gpio.h"
+
+#define GPT2_IRQn	141
+#define GPIO4_Combined_16_31_IRQn	105
 
 GIC_Type * get_gic_base(void)
 {
@@ -57,11 +61,6 @@ void gic_enable_irq(IRQn_Type nr)
 
 }
 
-#define GPIO4                                       0X020A8000U
-#define GPIO4_DR                                  	(volatile unsigned int *)(GPIO4+0X00)
-#define GPIO4_ISR                                   (volatile unsigned int *)(GPIO4+0X18)
-#define GPIO4_PSR                                   (volatile unsigned int *)(GPIO4+0X08)
-
 void gic_disable_irq(IRQn_Type nr)
 {
 	GIC_Type *gic = get_gic_base();
@@ -87,15 +86,17 @@ void handle_irq_c(void)
 	{
 		case GPIO4_Combined_16_31_IRQn:
 		{
-				printf ("[0X%x]\r\n",  (*GPIO4_PSR) );	
-				//irda_irq();
-				/* write 1 to clear GPIO4_IO019 interrput status*/
-				*GPIO4_ISR |= (1 << 19);
+			irda_irq();
+			
+			/* write 1 to clear GPIO4_IO019 interrput status*/
+			*GPIO4_ISR |= (1 << 19);
 			break;
 		}
 		case GPT2_IRQn:
 		{
+			
 			timer_irq();
+			
 			/* 清除中断 */
 			GPT2->SR = 1;
 		}

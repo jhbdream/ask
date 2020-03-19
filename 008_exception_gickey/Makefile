@@ -15,7 +15,7 @@ LIBDIR=$(subst arm-linux-gnueabihf-gcc,../,$(GCCDIR))
 LDFLAGS         :=-lgcc -L$(LIBDIR)lib/gcc/arm-linux-gnueabihf/6.2.1
 objs :=  start.o main.o uart.o eabi_compat.o my_printf.o gic.o gpio.o timer.o irda/circle_buffer.o irda/irda_raw.o
 
-TARGET := except
+TARGET := irda
 
 $(TARGET).img : $(objs)
 	$(LD) -T imx6ull.lds -o $(TARGET).elf $^ $(LDFLAGS)
